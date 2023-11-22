@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { EventService } from './event.service';
-import { CreateEventDto } from './event.type';
+import { CreateEventDto, UpdateEventDto } from './event.type';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Controller('api/v1')
 export class EventController {
@@ -33,11 +35,23 @@ export class EventController {
 
   @Post('event')
   async createEvent(@Body() createEventDto: CreateEventDto) {
+    const newEventId = uuidv4();
+
+    createEventDto.id = newEventId;
     const newEvent = await this.eventService.create(createEventDto);
 
     return {
       message: 'Event created successfully',
       data: newEvent,
+    };
+  }
+
+  @Put('event/:id')
+  async updateEvent(@Param('id') eventId: string, @Body() updateEventDto: UpdateEventDto) {
+    const updatedEvent = await this.eventService.update(eventId, updateEventDto);
+    return {
+      message: 'Event updated successfully',
+      data: updatedEvent,
     };
   }
 
