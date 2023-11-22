@@ -1,27 +1,49 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { EventService } from './event.service';
-import { Request } from 'express';
+import { CreateEventDto } from './event.type';
 
 @Controller('api/v1')
 export class EventController {
-  constructor(private readonly eventService: EventService) {
-
-  }
+  constructor(private readonly eventService: EventService) { }
 
   @Get('events')
-  async eventsBe(@Req() req: Request) {
-    let option = {}
-    const query = this.eventService.find(option)
+  async events(@Query('page') page: number = 1) {
+    const limit = 10;
+    const parsedPage = parseInt(page as any) || 1;
 
-    const page: number = parseInt(req.query.page as any) || 1
-    const limit = 10
+    // Validate page number to ensure it's not negative
+    const validatedPage = parsedPage > 0 ? parsedPage : 1;
+
+    const option = {};
     const total = await this.eventService.count(option);
-    const data = await query.skip((page - 1) * limit).limit(limit).exec();
+
+    const skip = (validatedPage - 1) * limit;
+    const data = await this.eventService.find(option)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
     return {
       data,
       total,
-      page,
+      page: validatedPage,
       last_page: Math.ceil(total / limit)
-    }
+    };
+  }
+
+  @Post('event')
+  async createEvent(@Body() createEventDto: CreateEventDto) {
+    const newEvent = await this.eventService.create(createEventDto);
+
+    return {
+      message: 'Event created successfully',
+      data: newEvent,
+    };
+  }
+
+  @Delete('event/:id')
+  async removeEvent(@Param('id') eventId: string) {
+    const message = await this.eventService.delete(eventId);
+    return message;
   }
 }

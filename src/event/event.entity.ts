@@ -1,11 +1,17 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import { Document } from 'mongoose'
+import { Document, Model } from 'mongoose'
 import { Factory } from "nestjs-seeder"
+import { v4 as uuidv4 } from 'uuid'
 
 export type EventDocument = Event & Document
 
 @Schema()
 export class Event {
+
+  @Factory(() => uuidv4())
+  @Prop({ type: String })
+  id: string;
+
   @Factory(faker => faker.lorem.words(2))
   @Prop()
   name: string
