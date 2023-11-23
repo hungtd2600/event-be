@@ -1,36 +1,35 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import { Document, Model } from 'mongoose'
-import { Factory } from "nestjs-seeder"
-import { v4 as uuidv4 } from 'uuid'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Model } from 'mongoose';
+import { Factory } from 'nestjs-seeder';
+import { v4 as uuidv4 } from 'uuid';
 
-export type EventDocument = Event & Document
+export type EventDocument = Event & Document;
 
 @Schema()
 export class Event {
-
   @Factory(() => uuidv4())
   @Prop({ type: String })
   id: string;
 
-  @Factory(faker => faker.lorem.words(2))
+  @Factory((faker) => faker.lorem.words(2))
   @Prop()
-  name: string
+  name: string;
 
-  @Factory(faker => faker.date.past())
+  @Factory((faker) => faker.date.past())
   @Prop()
-  date: Date
+  date: Date;
 
-  @Factory(faker => faker.lorem.words(10))
+  @Factory((faker) => faker.lorem.words(10))
   @Prop()
-  location: string
+  location: string;
 
-  @Factory(faker => faker.image.imageUrl())
+  @Factory((faker) => faker.image.imageUrl())
   @Prop()
-  imageUrl: string
+  imageUrl: string;
 
-  @Factory(faker => faker.lorem.words(50))
+  @Factory((faker) => faker.lorem.words(50))
   @Prop()
-  description: string
+  description: string;
 }
 
-export const EventSchema = SchemaFactory.createForClass(Event)
+export const EventSchema = SchemaFactory.createForClass(Event);

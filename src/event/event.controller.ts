@@ -1,12 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './event.type';
 import { v4 as uuidv4 } from 'uuid';
 
-
 @Controller('api/v1')
 export class EventController {
-  constructor(private readonly eventService: EventService) { }
+  constructor(private readonly eventService: EventService) {}
 
   @Get('events')
   async events(@Query('page') page: number = 1) {
@@ -20,7 +28,8 @@ export class EventController {
     const total = await this.eventService.count(option);
 
     const skip = (validatedPage - 1) * limit;
-    const data = await this.eventService.find(option)
+    const data = await this.eventService
+      .find(option)
       .skip(skip)
       .limit(limit)
       .exec();
@@ -29,7 +38,7 @@ export class EventController {
       data,
       total,
       page: validatedPage,
-      last_page: Math.ceil(total / limit)
+      last_page: Math.ceil(total / limit),
     };
   }
 
@@ -47,8 +56,14 @@ export class EventController {
   }
 
   @Put('event/:id')
-  async updateEvent(@Param('id') eventId: string, @Body() updateEventDto: UpdateEventDto) {
-    const updatedEvent = await this.eventService.update(eventId, updateEventDto);
+  async updateEvent(
+    @Param('id') eventId: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const updatedEvent = await this.eventService.update(
+      eventId,
+      updateEventDto,
+    );
     return {
       message: 'Event updated successfully',
       data: updatedEvent,

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event, EventDocument } from './event.entity';
 import { FilterQuery, Model } from 'mongoose';
@@ -7,17 +11,15 @@ import { CreateEventDto, UpdateEventDto } from './event.type';
 @Injectable()
 export class EventService {
   constructor(
-    @InjectModel(Event.name) private readonly eventModel: Model<EventDocument>
-  ) {
-
-  }
+    @InjectModel(Event.name) private readonly eventModel: Model<EventDocument>,
+  ) {}
 
   find(option: FilterQuery<EventDocument>) {
-    return this.eventModel.find(option)
+    return this.eventModel.find(option);
   }
 
   count(options: FilterQuery<EventDocument>) {
-    return this.eventModel.countDocuments(options).exec()
+    return this.eventModel.countDocuments(options).exec();
   }
 
   async create(createEventDto: CreateEventDto): Promise<Event> {
@@ -42,7 +44,10 @@ export class EventService {
     }
   }
 
-  async update(eventId: string, updateEventDto: UpdateEventDto): Promise<Event> {
+  async update(
+    eventId: string,
+    updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
     const existingEvent = await this.eventModel.findOne({ id: eventId }).exec();
 
     if (!existingEvent) {
@@ -68,7 +73,6 @@ export class EventService {
     const updatedEvent = await existingEvent.save();
     return updatedEvent;
   }
-
 
   async delete(eventId: string) {
     const result = await this.eventModel.deleteOne({ id: eventId }).exec();
