@@ -8,11 +8,15 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/signup')
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    const { username, password } = createUserDto;
-    if (username.length < 4 || password.length < 4)
+  async createUser(@Body() createEventDto: CreateUserDto) {
+    const { password, username } = createEventDto;
+    if (username.length < 4 || username.length > 10)
       return {
-        message: 'Username and password must be at least 4 characters long',
+        message: 'Username is 4 to 10 characters long',
+      };
+    if (password.length < 4 || password.length > 10)
+      return {
+        message: 'Password is 4 to 10 characters long',
       };
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltOrRounds);
