@@ -3,10 +3,8 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import * as bodyParser from 'body-parser';
 
-
 async function bootstrap() {
   dotenv.config();
-
 
   const port = process.env.PORT || 8000;
 

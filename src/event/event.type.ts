@@ -7,7 +7,6 @@ export class CreateEventDto {
   readonly location: string;
 }
 
-
 export class UpdateEventDto {
   name?: string;
   description?: string;

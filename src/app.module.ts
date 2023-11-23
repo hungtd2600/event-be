@@ -6,13 +6,17 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://hungtd172600:PVCiboKo1sjbOrXF@cluster0.gsyvx5t.mongodb.net/?retryWrites=true&w=majority', {
-      autoCreate: true
-    }),
+    MongooseModule.forRoot(
+      'mongodb+srv://hungtd172600:PVCiboKo1sjbOrXF@cluster0.gsyvx5t.mongodb.net/?retryWrites=true&w=majority',
+      {
+        autoCreate: true,
+      },
+    ),
     EventModule,
     UsersModule,
-    AuthModule],
+    AuthModule,
+  ],
   controllers: [],
-  providers: []
+  providers: [],
 })
-export class AppModule { }
+export class AppModule {}
