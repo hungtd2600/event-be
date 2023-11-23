@@ -8,19 +8,12 @@ export class UsersService {
   constructor(
     @InjectModel('user') private readonly userModel: Model<UserDocument>,
   ) {}
-  async createUser(
-    username: string,
-    _password: string,
-  ): Promise<{
-    password?: string;
-    message?: string;
-    username?: string;
-  }> {
+  async createUser(username: string, password: string) {
     const existingUser = await this.userModel.findOne({ username });
     if (existingUser) return { message: 'Username already exists' };
     return this.userModel.create({
       username,
-      message: 'User created successfully',
+      password,
     });
   }
   async getUser(query: object): Promise<User> {
