@@ -7,10 +7,16 @@ import {
   Post,
   Put,
   Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { Multer } from 'multer';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './event.type';
 import { v4 as uuidv4 } from 'uuid';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @Controller('api/v1')
 export class EventController {
@@ -43,16 +49,52 @@ export class EventController {
   }
 
   @Post('event')
-  async createEvent(@Body() createEventDto: CreateEventDto) {
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() createEventDto: CreateEventDto,
+    @UploadedFile() file: Multer.File,
+  ) {
+    console.log(createEventDto);
     const newEventId = uuidv4();
-
     createEventDto.id = newEventId;
+
+    if (file) {
+      const createdEvent = await this.eventService.create({
+        ...createEventDto,
+        imageUrl: file.originalname,
+        imageData: file.buffer,
+      });
+
+      return {
+        message: 'Event created successfully',
+        data: createdEvent,
+      };
+    }
+
+    if (file) {
+      createEventDto.imageUrl = file.originalname;
+    }
+
     const newEvent = await this.eventService.create(createEventDto);
 
     return {
       message: 'Event created successfully',
       data: newEvent,
     };
+  }
+
+  @Get('image/:id')
+  async getImage(@Param('id') id: string, @Res() res: Response) {
+    const event = await this.eventService.getEventById(id);
+    console.log(event);
+
+    if (!event || !event.imageData) {
+      return res.status(404).send('Image not found');
+    }
+
+    res.set('Content-Type', 'image/jpeg');
+
+    res.send(event.imageData.buffer);
   }
 
   @Put('event/:id')

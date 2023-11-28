@@ -22,6 +22,10 @@ export class EventService {
     return this.eventModel.countDocuments(options).exec();
   }
 
+  async getEventById(id: string): Promise<Event | null> {
+    return await this.eventModel.findOne({ id: id }).exec();
+  }
+
   async create(createEventDto: CreateEventDto): Promise<Event> {
     try {
       if (!createEventDto.name) {
