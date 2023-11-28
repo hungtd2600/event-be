@@ -3,8 +3,9 @@ export class CreateEventDto {
   readonly name: string;
   readonly description: string;
   readonly date: Date;
-  readonly imageUrl: string;
+  imageUrl: string;
   readonly location: string;
+  imageData: Buffer;
 }
 
 export class UpdateEventDto {

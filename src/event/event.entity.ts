@@ -30,6 +30,9 @@ export class Event {
   @Factory((faker) => faker.lorem.words(50))
   @Prop()
   description: string;
+
+  @Prop()
+  imageData: Buffer;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
