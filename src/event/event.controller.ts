@@ -7,10 +7,17 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './event.type';
 import { v4 as uuidv4 } from 'uuid';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { Response } from 'express';
 
 @Controller('api/v1')
 export class EventController {
@@ -74,5 +81,43 @@ export class EventController {
   async removeEvent(@Param('id') eventId: string) {
     const message = await this.eventService.delete(eventId);
     return message;
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const name = file.originalname.split('.')[0];
+          const fileExtension = file.originalname.split('.')[1];
+          const newFileName =
+            name.split(' ').join('_') + '_' + Date.now() + '.' + fileExtension;
+          cb(null, newFileName);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jepg|png|gif)$/)) {
+          return cb(null, false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  uploadPhoto(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    if (!file) {
+      throw new BadRequestException('File is not image');
+    } else {
+      const response = {
+        fileFath: `https://lime-brave-shrimp.cyclic.app/api/v1/pictures/${file.filename}`,
+      };
+      return response;
+    }
+  }
+
+  @Get('pictures/:filename')
+  async getPicture(@Param('filename') filename, @Res() res: Response) {
+    res.sendFile(filename, { root: './uploads' });
   }
 }
