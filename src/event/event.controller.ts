@@ -54,7 +54,6 @@ export class EventController {
     @Body() createEventDto: CreateEventDto,
     @UploadedFile() file: Multer.File,
   ) {
-    console.log(createEventDto);
     const newEventId = uuidv4();
     createEventDto.id = newEventId;
 
